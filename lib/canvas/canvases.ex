@@ -38,7 +38,12 @@ defmodule Canvas.Canvases do
   """
   def get_ascii_canvas!(id), do: Repo.get!(AsciiCanvasRecord, id)
 
-  def get_ascii_canvas_by_hash(hash), do: Repo.get_by(AsciiCanvasRecord, hash: hash)
+  def fetch_ascii_canvas_by_hash(hash) do
+    case Repo.get_by(AsciiCanvasRecord, hash: hash) do
+      nil -> {:error, :not_found}
+      canvas -> {:ok, canvas}
+    end
+  end
 
   @doc """
   Creates a ascii_canvas.
@@ -61,11 +66,11 @@ defmodule Canvas.Canvases do
   end
 
   defp random_hash() do
-    hash = :crypto.strong_rand_bytes(6) |> Base.url_encode64 
+    hash = :crypto.strong_rand_bytes(6) |> Base.url_encode64()
 
-    case get_ascii_canvas_by_hash(hash) do
-      nil -> hash
-      _ -> random_hash()
+    case fetch_ascii_canvas_by_hash(hash) do
+      {:error, :not_found} -> hash
+      {:ok, _} -> random_hash()
     end
   end
 
