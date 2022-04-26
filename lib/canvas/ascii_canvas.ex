@@ -89,4 +89,11 @@ defmodule Canvas.ASCIICanvas do
   defp render_character(_canvas, width, height, i, j) when i == width and j == height - 1, do: []
   defp render_character(_canvas, width, _height, i, _j) when i == width, do: ?\n
   defp render_character(canvas, _width, _height, i, j), do: canvas[{i, j}]
+
+  def coords_to_string({i, j}), do: "#{i},#{j}"
+
+  def string_to_coords(str) do
+    [i, j] = String.split(str, ",") |> Enum.map(&String.to_integer/1)
+    {i, j}
+  end
 end

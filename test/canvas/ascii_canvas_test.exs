@@ -52,7 +52,7 @@ defmodule Canvas.ASCIICanvasTest do
              )
 
     # this fits
-    assert {:ok, ascii_canvas} =
+    assert {:ok, _ascii_canvas} =
              ASCIICanvas.draw(ascii_canvas,
                x: @height - 5,
                y: @width - 5,
@@ -130,5 +130,13 @@ defmodule Canvas.ASCIICanvasTest do
     assert String.at(str, 0) == "C"
     assert String.at(str, @width) == "\n"
     assert String.at(str, @width + 2) == "X"
+  end
+
+  test "string to coords" do
+    assert ASCIICanvas.string_to_coords("10,5") == {10, 5} 
+  end
+  
+  test "coords to string" do
+    assert ASCIICanvas.coords_to_string({5, 10}) == "5,10"
   end
 end

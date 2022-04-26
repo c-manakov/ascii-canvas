@@ -5,7 +5,9 @@ defmodule CanvasWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/api", CanvasWeb do
+  scope "/", CanvasWeb do
     pipe_through :api
   end
+
+  post "/canvas", CanvasWeb.MainController, :create
 end
