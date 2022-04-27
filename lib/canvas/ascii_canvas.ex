@@ -14,24 +14,23 @@ defmodule Canvas.ASCIICanvas do
   end
 
   def draw(canvas, opts \\ []) do
-    x = Keyword.fetch!(opts, :x)
-    y = Keyword.fetch!(opts, :y)
-    width = Keyword.fetch!(opts, :width)
-    height = Keyword.fetch!(opts, :height)
+    with {:ok, x} <- Keyword.fetch(opts, :x),
+         {:ok, y} <- Keyword.fetch(opts, :y),
+         {:ok, width} <- Keyword.fetch(opts, :width),
+         {:ok, height} <- Keyword.fetch(opts, :height),
+         fill = Keyword.get(opts, :fill, nil),
+         outline = Keyword.get(opts, :outline, nil) do
+      cond do
+        fill == nil and outline == nil ->
+          {:error, :fill_and_outline_empty}
 
-    fill = Keyword.get(opts, :fill, nil)
-    outline = Keyword.get(opts, :outline, nil)
+        x + height > canvas.height or y + width > canvas.width ->
+          {:error, :overflow}
 
-    cond do
-      fill == nil and outline == nil ->
-        {:error, :fill_and_outline_empty}
-
-      x + height > canvas.height or y + width > canvas.width ->
-        {:error, :overflow}
-
-      true ->
-        canvas_map = draw(canvas.canvas, x, y, width, height, fill, outline)
-        {:ok, %ASCIICanvas{canvas: canvas_map, width: canvas.width, height: canvas.height}}
+        true ->
+          canvas_map = draw(canvas.canvas, x, y, width, height, fill, outline)
+          {:ok, %ASCIICanvas{canvas: canvas_map, width: canvas.width, height: canvas.height}}
+      end
     end
   end
 

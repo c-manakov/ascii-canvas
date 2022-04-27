@@ -37,7 +37,16 @@ defmodule Canvas.Canvases do
 
   """
   def get_ascii_canvas!(id), do: Repo.get!(AsciiCanvasRecord, id)
+  
+  @doc """
+  ## Examples
 
+      iex> fetch_ascii_canvas_by_hash("1234")
+      {:ok, %AsciiCanvasRecord{}}
+
+      iex> fetch_ascii_canvas_by_hash("214")
+      {:error, :not_found}
+  """
   def fetch_ascii_canvas_by_hash(hash) do
     case Repo.get_by(AsciiCanvasRecord, hash: hash) do
       nil -> {:error, :not_found}
@@ -65,6 +74,16 @@ defmodule Canvas.Canvases do
     Repo.insert(%AsciiCanvasRecord{data: ascii_canvas, hash: hash})
   end
 
+  def draw(%AsciiCanvasRecord{} = canvas, opts) do
+    ascii_canvas = canvas.data
+
+    with {:ok, ascii_canvas} <- ASCIICanvas.draw(ascii_canvas, opts) do
+      canvas
+      |> Ecto.Changeset.change(data: ascii_canvas)
+      |> Repo.update()
+    end
+  end
+
   defp random_hash() do
     hash = :crypto.strong_rand_bytes(6) |> Base.url_encode64()
 
@@ -72,52 +91,5 @@ defmodule Canvas.Canvases do
       {:error, :not_found} -> hash
       {:ok, _} -> random_hash()
     end
-  end
-
-  @doc """
-  Updates a ascii_canvas.
-
-  ## Examples
-
-      iex> update_ascii_canvas(ascii_canvas, %{field: new_value})
-      {:ok, %AsciiCanvasRecord{}}
-
-      iex> update_ascii_canvas(ascii_canvas, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_ascii_canvas(%AsciiCanvasRecord{} = ascii_canvas, attrs) do
-    ascii_canvas
-    |> AsciiCanvasRecord.changeset(attrs)
-    |> Repo.update()
-  end
-
-  @doc """
-  Deletes a ascii_canvas.
-
-  ## Examples
-
-      iex> delete_ascii_canvas(ascii_canvas)
-      {:ok, %AsciiCanvasRecord{}}
-
-      iex> delete_ascii_canvas(ascii_canvas)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_ascii_canvas(%AsciiCanvasRecord{} = ascii_canvas) do
-    Repo.delete(ascii_canvas)
-  end
-
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking ascii_canvas changes.
-
-  ## Examples
-
-      iex> change_ascii_canvas(ascii_canvas)
-      %Ecto.Changeset{data: %AsciiCanvasRecord{}}
-
-  """
-  def change_ascii_canvas(%AsciiCanvasRecord{} = ascii_canvas, attrs \\ %{}) do
-    AsciiCanvasRecord.changeset(ascii_canvas, attrs)
   end
 end
