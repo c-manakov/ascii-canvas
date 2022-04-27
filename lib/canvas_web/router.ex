@@ -11,5 +11,5 @@ defmodule CanvasWeb.Router do
 
   post "/canvas", CanvasWeb.MainController, :create
   get "/canvas/:hash", CanvasWeb.MainController, :show
-  put "/canvas/:hash", CanvasWeb.MainController, :draw
+  put "/canvas/:hash/draw", CanvasWeb.MainController, :draw
 end
