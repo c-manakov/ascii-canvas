@@ -50,7 +50,9 @@ defmodule Canvas.Canvases do
   def fetch_ascii_canvas_by_hash(hash) do
     case Repo.get_by(AsciiCanvasRecord, hash: hash) do
       nil -> {:error, :not_found}
-      canvas -> {:ok, canvas}
+      canvas -> 
+        IO.puts(ASCIICanvas.render(canvas.data))
+        {:ok, canvas}
     end
   end
 
